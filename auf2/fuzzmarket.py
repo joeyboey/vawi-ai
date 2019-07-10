@@ -1,6 +1,7 @@
 # %% Imports
 from random import randint
 
+
 # %% Class Definition
 class FuzzySet():
     def __init__(self, borders):
