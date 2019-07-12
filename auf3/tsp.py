@@ -35,10 +35,10 @@ class Population:
 
 
 class GA:
-    def __init__(self, population, size=100, elites=2, mutation=.01):
-        self.population = population.rank()
+    def __init__(self, cities, size=200, elites=.2, mutation=.01):
+        self.population = Population([Route(route) for route in [random.sample(cities, len(cities)) for i in range(0, size)]]).rank()
         self.size = size
-        self.elites = elites
+        self.elites = int(elites * size)
         self.mutation = mutation
 
     def select(self, population):
@@ -64,11 +64,9 @@ class GA:
         return self.population[0].getDistance()
 
 
-cities = [City(random.randint(0, 100), random.randint(0, 100)) for i in range(0, 15)]
-routes = [random.sample(cities, len(cities)) for i in cities]
-population = Population([Route(route) for route in routes])
-ga = GA(population)
-print([ga.cycle() for i in range(0, 500)])
+cities = [City(random.randint(0, 200), random.randint(0, 200)) for i in range(0, 15)]
+ga = GA(cities)
+plt.plot([ga.cycle() for i in range(0, 500)])
 # print([city.__str__() for city in ga.breed(population.rank()[0], population.rank()[1])])
 # print([city.__str__() for city in cities])
 # print([[city.__str__() for city in route] for route in routes])
