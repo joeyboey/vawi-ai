@@ -1,6 +1,5 @@
 # %% Imports
 import random
-import matplotlib.pyplot as plt
 
 
 # %% Class Definitions
@@ -35,11 +34,12 @@ class Population:
 
 
 class GA:
-    def __init__(self, cities, size=200, elites=.2, mutation=.01):
+    def __init__(self, cities, size=200, elites=.2, mutation=.005):
         self.population = Population([Route(route) for route in [random.sample(cities, len(cities)) for i in range(0, size)]]).rank()
         self.size = size
         self.elites = int(elites * size)
         self.mutation = mutation
+        self.evolvement = []
 
     def select(self, population):
         return population[:self.elites] + [r for r in population[self.elites:] if population[0].getDistance() / r.getDistance() >= random.random()]
@@ -50,7 +50,7 @@ class GA:
         return Route(m + [c for c in dad.route if c not in m])
 
     def breedAll(self, selection):
-        return selection[:self.elites] + [self.breed(mum, dad) for mum, dad in [random.sample(selection[self.elites:], 2) for i in range(0, self.size)]]
+        return selection[:self.elites] + [self.breed(mum, dad) for mum, dad in [random.sample(selection[self.elites:], 2) for i in range(0, self.size - self.elites)]]
 
     def mutate(self, route):
         a, b = random.sample(route, 2)
@@ -61,13 +61,4 @@ class GA:
 
     def cycle(self):
         self.population = Population([Route(self.mutate(route.route)) for route in self.breedAll(self.select(self.population))]).rank()
-        return self.population[0].getDistance()
-
-
-cities = [City(random.randint(0, 200), random.randint(0, 200)) for i in range(0, 15)]
-ga = GA(cities)
-plt.plot([ga.cycle() for i in range(0, 500)])
-# print([city.__str__() for city in ga.breed(population.rank()[0], population.rank()[1])])
-# print([city.__str__() for city in cities])
-# print([[city.__str__() for city in route] for route in routes])
-# print([route.getDistance() for route in population.rank()])
+        self.evolvement.append([self.population[0].getDistance(), sum([r.getDistance() for r in self.population]) / len(self.population)])
