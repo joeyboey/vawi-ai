@@ -19,10 +19,8 @@ class Route:
         self.route = route
 
     def getDistance(self):
-        distance, route = 0, self.route + [self.route[0]]
-        for pair in zip(route, route[1:]):
-            distance += pair[0].getDistance(pair[1])
-        return distance
+        route = self.route + [self.route[0]]
+        return sum([pair[0].getDistance(pair[1]) for pair in zip(route, route[1:])])
 
 
 class Population:
@@ -34,7 +32,7 @@ class Population:
 
 
 class GA:
-    def __init__(self, cities, size=200, elites=.2, mutation=.005):
+    def __init__(self, cities, size=200, elites=.2, mutation=.00):
         self.population = Population([Route(route) for route in [random.sample(cities, len(cities)) for i in range(0, size)]]).rank()
         self.size = size
         self.elites = int(elites * size)
